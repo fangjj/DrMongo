@@ -1,19 +1,36 @@
-const pupConn = DDP.connect("http://localhost:3000");
+console.log(Meteor.settings);
+const pupConn = DDP.connect(Meteor.settings.oauthDDPURL);
 
 Meteor.methods({
-  test() {
-    console.log(this.userId);
-    return this.userId;
+  userIsInRole(loginToken) {
+    let userId = this.userId;
+    
+    if(!userId && loginToken) {
+      userId = Meteor.call('authenticate', loginToken);
+    }
+    // console.log(userId);
+    try {
+      const ret = JSON.parse(userId);
+      const DrRoles = [Meteor.settings.readRole, Meteor.settings.writeRole];
+      if(_.intersection(DrRoles, ret.roles).length === 0) {
+        throw new Meteor.Error('userIsInRole', `${ret.roles} roles is not vaild!`);
+      }
+      return userId;
+    } catch (e) {
+      throw new Meteor.Error('userIsInRole', `${userId} userId is not vaild!`); 
+    }
   },
   authenticate(loginToken){
-     const userId = pupConn.call('getUserByToken', loginToken);
-     console.log(userId);
+     const ret = pupConn.call('getUserByToken', loginToken);
+     //console.log(ret);
      // { _id: '4737i3wTYkaJpeN85', roles: [ 'user', 'admin' ] }
-     if(userId) {
-      this.setUserId(JSON.stringify(userId));
+     if (ret) {
+        const userId = JSON.stringify(ret);
+        this.setUserId(userId);
+        return userId;
+     } else {
+        throw new Meteor.Error('authenticate', `${loginToken} loginToken is not vaild!`);
      }
-     
-     return userId;
   },
   createCollection(databaseId, collectionName) {
     let database = Databases.findOne(databaseId);

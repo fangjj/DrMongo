@@ -1,0 +1,7 @@
+{
+	"public": {},
+	"oauthDDPURL": "http://localhost:3000",
+	"readRole": "user",
+	"writeRole": "admin",
+	"writeMongoUrl": ["mongodb://localhost:3041/meteor"]
+}

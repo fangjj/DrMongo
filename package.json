@@ -4,7 +4,7 @@
   "description": "Open-source MongoDB admin app build on MeteorJs.",
   "main": "index.js",
   "scripts": {
-    "start": "meteor -p 3040",
+    "start": "meteor --settings settings-development.json -p 3040",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
