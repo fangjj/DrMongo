@@ -72,3 +72,9 @@ Meteor.publish('databases', function(connectionSlug) {
     Databases.find({connection_id: connection._id})
   ]
 });
+
+
+Meteor.publish('test', function() {
+  console.log(this.userId);
+  return null;
+});

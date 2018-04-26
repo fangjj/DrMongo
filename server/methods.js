@@ -1,4 +1,20 @@
+const pupConn = DDP.connect("http://localhost:3000");
+
 Meteor.methods({
+  test() {
+    console.log(this.userId);
+    return this.userId;
+  },
+  authenticate(loginToken){
+     const userId = pupConn.call('getUserByToken', loginToken);
+     console.log(userId);
+     // { _id: '4737i3wTYkaJpeN85', roles: [ 'user', 'admin' ] }
+     if(userId) {
+      this.setUserId(JSON.stringify(userId));
+     }
+     
+     return userId;
+  },
   createCollection(databaseId, collectionName) {
     let database = Databases.findOne(databaseId);
     MongoHelpers.createCollection(database, collectionName);
